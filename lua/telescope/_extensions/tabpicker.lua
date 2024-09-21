@@ -1,6 +1,10 @@
 local conf = {
     preview = false,
-    mappings = {},
+    mappings = {
+        n = {
+            ["dd"] = require("tabpicker.builtin.actions").close_tab,
+        },
+    },
     format = {
         default_name = "[No Name]",
         leading_tabnr = true,
