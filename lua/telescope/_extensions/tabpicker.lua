@@ -1,9 +1,7 @@
 local conf = {
     preview = false,
     mappings = {
-        n = {
-            ["dd"] = require("tabpicker.builtin.actions").close_tab,
-        },
+        n = {},
     },
     format = {
         default_name = "[No Name]",
@@ -11,7 +9,7 @@ local conf = {
     },
 }
 
-local tabpicker = require("tabpicker.telescope")
+local tabpicker = require("tabpicker.builtin")
 return require("telescope").register_extension({
     setup = function(ext_config, config) conf = vim.tbl_deep_extend("force", conf, ext_config) end,
     exports = {
