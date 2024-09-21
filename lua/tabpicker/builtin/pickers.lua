@@ -5,14 +5,8 @@ local action_state = require("telescope.actions.state")
 local conf = require("telescope.config").values
 local core = require("tabpicker.core")
 
-local utils = {}
-function utils.close_tab(bufnr)
-    local picker = action_state.get_current_picker(bufnr)
-    picker:delete_selection(function(entry) vim.api.nvim_command("tabclose " .. entry.value.id) end)
-end
-
-local tabpicker = {}
-function tabpicker.find_tabpages(opts)
+local _pickers = {}
+function _pickers.find_tabpages(opts)
     pickers
         .new(opts, {
             prompt_title = "Tabs",
@@ -34,8 +28,8 @@ function tabpicker.find_tabpages(opts)
                     vim.api.nvim_set_current_tabpage(entry.value.id)
                 end)
                 for mode, mappings in pairs(opts.mappings or {}) do
-                    for key, fn_name in pairs(mappings) do
-                        map(mode, key, utils[fn_name])
+                    for key, fn in pairs(mappings) do
+                        map(mode, key, fn)
                     end
                 end
                 return true
@@ -44,4 +38,4 @@ function tabpicker.find_tabpages(opts)
         :find()
 end
 
-return tabpicker
+return _pickers
