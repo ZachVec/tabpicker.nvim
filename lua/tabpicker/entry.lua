@@ -1,30 +1,26 @@
-local entry = {}
+---@class (exact) TabEntry
+---@field id number
+---@field winnrs number[]
+---@field get_one fun(tabnr: number): TabEntry
+---@field get_all fun(): TabEntry[]
+local TabEntry = {
+  id = 0,
+  winnrs = {},
+}
 
-entry.__index = entry
-
-function entry:new(opts)
-    opts = opts or {}
-    local obj = setmetatable({
-        id = opts.id or 0,
-        iscurrent = opts.iscurrent or false,
-        filenames = opts.filenames or {},
-    }, self)
-    return obj
+function TabEntry:new(tabnr, winnrs)
+  local obj = setmetatable({}, TabEntry)
+  obj.id = tabnr
+  obj.winnrs = winnrs
+  return obj
 end
 
-function entry:format(opts)
-    local default_name = opts.default_name
-    local filenames = {}
-    for _, item in ipairs(self.filenames) do
-        table.insert(filenames, item ~= "" and item or default_name)
-    end
-    local filename = table.concat(filenames, ", ")
-    if opts.leading_tabnr then return string.format("%d: %s%s", self.id, filename, self.iscurrent and " <" or "") end
-    return string.format("%s%s", filename, self.iscurrent and " <" or "")
+function TabEntry.get_one(tabnr)
+  return TabEntry:new(tabnr, vim.api.nvim_tabpage_list_wins(tabnr))
 end
 
---- add filename to filenames
----@param filename string
-function entry:add_file(filename) table.insert(self.filenames, filename) end
+function TabEntry.get_all()
+  return vim.tbl_map(TabEntry.get_one, vim.api.nvim_list_tabpages())
+end
 
-return entry
+return TabEntry
